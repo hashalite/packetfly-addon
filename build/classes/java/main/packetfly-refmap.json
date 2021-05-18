@@ -1,0 +1,20 @@
+{
+  "mappings": {
+    "net/xolt/addons/packetfly/mixins/ClientPlayerEntityMixin": {
+      "pushOutOfBlocks": "Lnet/minecraft/class_746;method_30673(DD)V"
+    },
+    "net/xolt/addons/packetfly/mixins/EntityMixin": {
+      "pushAwayFrom": "Lnet/minecraft/class_1297;method_5697(Lnet/minecraft/class_1297;)V"
+    }
+  },
+  "data": {
+    "named:intermediary": {
+      "net/xolt/addons/packetfly/mixins/ClientPlayerEntityMixin": {
+        "pushOutOfBlocks": "Lnet/minecraft/class_746;method_30673(DD)V"
+      },
+      "net/xolt/addons/packetfly/mixins/EntityMixin": {
+        "pushAwayFrom": "Lnet/minecraft/class_1297;method_5697(Lnet/minecraft/class_1297;)V"
+      }
+    }
+  }
+}
