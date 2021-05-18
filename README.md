@@ -1,11 +1,5 @@
-# Meteor Addon Template
+# Packet Fly Addon for Meteor
 
-A template to allow easy usage of the Meteor Addon API.
+Mostly skidded from phobos, just nice to have.
 
-### How to use:  
-- Clone this project
-- Use the template and API to create new modules/commands
-- Run the mod with Meteor.
-
-### Documentation
-Check the [wiki](https://github.com/MeteorDevelopment/meteor-addon-template/wiki).
+PacketFly is not as effective in 1.16, but can bypass on servers with more lenient anticheats.
