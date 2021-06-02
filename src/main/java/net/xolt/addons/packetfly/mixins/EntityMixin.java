@@ -13,6 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EntityMixin {
     @Inject(method = "pushAwayFrom", at = @At("HEAD"), cancellable = true)
     private void onApplyCollision(Entity entity, CallbackInfo info) {
-        if (Modules.get().get(PacketFly.class).isActive() && entity == MinecraftClient.getInstance().player) {info.cancel();}
+        if (Modules.get().get(PacketFly.class).isActive() && MinecraftClient.getInstance().player == (Object) this) {info.cancel();}
     }
 }
