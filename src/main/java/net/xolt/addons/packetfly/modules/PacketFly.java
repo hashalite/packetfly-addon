@@ -2,14 +2,14 @@ package net.xolt.addons.packetfly.modules;
 
 import io.netty.util.internal.ConcurrentSet;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.entity.player.PlayerMoveEvent;
-import minegame159.meteorclient.events.entity.player.SendMovementPacketsEvent;
-import minegame159.meteorclient.events.packets.PacketEvent;
-import minegame159.meteorclient.mixin.PlayerPositionLookS2CPacketAccessor;
-import minegame159.meteorclient.settings.*;
-import minegame159.meteorclient.systems.modules.Categories;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.player.PlayerUtils;
+import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
+import meteordevelopment.meteorclient.events.entity.player.SendMovementPacketsEvent;
+import meteordevelopment.meteorclient.events.packets.PacketEvent;
+import meteordevelopment.meteorclient.mixin.PlayerPositionLookS2CPacketAccessor;
+import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.modules.Categories;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
@@ -20,12 +20,12 @@ import java.util.Set;
 
 public class PacketFly extends Module {
     private final Set<PlayerMoveC2SPacket> packets = new ConcurrentSet();
-    private final SettingGroup sgMovement = settings.createGroup("Movement");
-    private final SettingGroup sgClient = settings.createGroup("Client");
-    private final SettingGroup sgBypass = settings.createGroup("Bypass");
+    private final SettingGroup sgMovement = settings.createGroup("movement");
+    private final SettingGroup sgClient = settings.createGroup("client");
+    private final SettingGroup sgBypass = settings.createGroup("bypass");
 
     private final Setting<Double> horizontalSpeed = sgMovement.add(new DoubleSetting.Builder()
-            .name("Horizontal Speed")
+            .name("horizontal-speed")
             .description("Horizontal speed in blocks per second.")
             .defaultValue(5.2)
             .min(0.0)
@@ -36,67 +36,60 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Double> verticalSpeed = sgMovement.add(new DoubleSetting.Builder()
-            .name("Vertical Speed")
+            .name("vertical-speed")
             .description("Vertical speed in blocks per second.")
             .defaultValue(1.24)
             .min(0.0)
-            .max(5.0)
+            .max(20.0)
             .sliderMin(0.0)
             .sliderMax(20.0)
             .build()
     );
 
     private final Setting<Boolean> sendTeleport = sgMovement.add(new BoolSetting.Builder()
-            .name("Teleport")
+            .name("teleport")
             .description("Sends teleport packets.")
             .defaultValue(true)
             .build()
     );
 
     private final Setting<Boolean> setYaw = sgClient.add(new BoolSetting.Builder()
-            .name("Set Yaw")
+            .name("set-yaw")
             .description("Sets yaw client side.")
             .defaultValue(true)
             .build()
     );
 
     private final Setting<Boolean> setMove = sgClient.add(new BoolSetting.Builder()
-            .name("Set Move")
+            .name("set-move")
             .description("Sets movement client side.")
             .defaultValue(false)
             .build()
     );
 
     private final Setting<Boolean> setPos = sgClient.add(new BoolSetting.Builder()
-            .name("Set Pos")
+            .name("set-pos")
             .description("Sets position client side.")
             .defaultValue(false)
             .build()
     );
 
     private final Setting<Boolean> setID = sgClient.add(new BoolSetting.Builder()
-            .name("Set ID")
+            .name("set-id")
             .description("Updates teleport id when a position packet is received.")
-            .defaultValue(true)
-            .build()
-    );
-
-    private final Setting<Boolean> noClip = sgClient.add(new BoolSetting.Builder()
-            .name("NoClip")
-            .description("Makes the client ignore walls.")
             .defaultValue(false)
             .build()
     );
 
     private final Setting<Boolean> antiKick = sgBypass.add(new BoolSetting.Builder()
-            .name("Anti Kick")
+            .name("anti-kick")
             .description("Moves down occasionally to prevent kicks.")
             .defaultValue(true)
             .build()
     );
 
     private final Setting<Integer> downDelay = sgBypass.add(new IntSetting.Builder()
-            .name("Down Delay")
+            .name("down-delay")
             .description("How often you move down when not flying upwards. (ticks)")
             .defaultValue(4)
             .sliderMin(1)
@@ -107,7 +100,7 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Integer> downDelayFlying = sgBypass.add(new IntSetting.Builder()
-            .name("Down Delay (Flying)")
+            .name("flying-down-delay")
             .description("How often you move down when flying upwards. (ticks)")
             .defaultValue(10)
             .sliderMin(1)
@@ -118,9 +111,9 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Boolean> invalidPacket = sgBypass.add(new BoolSetting.Builder()
-            .name("Invalid Packet")
+            .name("invalid-packet")
             .description("Sends invalid movement packets.")
-            .defaultValue(true)
+            .defaultValue(false)
             .build()
     );
 
@@ -128,7 +121,7 @@ public class PacketFly extends Module {
     private int teleportID = 0;
 
     public PacketFly() {
-        super(Categories.Movement, "Packet Fly", "Fly using packets.");
+        super(Categories.Movement, "packet-fly", "Fly using packets.");
     }
 
     @EventHandler
@@ -149,9 +142,6 @@ public class PacketFly extends Module {
     public void onMove (PlayerMoveEvent event) {
         if (setMove.get() && flightCounter != 0) {
             event.movement = new Vec3d(mc.player.getVelocity().x, mc.player.getVelocity().y, mc.player.getVelocity().z);
-            if (noClip.get() && checkHitBoxes()) {
-                mc.player.noClip = true;
-            }
         }
     }
 
@@ -168,8 +158,8 @@ public class PacketFly extends Module {
             BlockPos pos = new BlockPos(mc.player.getPos().x, mc.player.getPos().y, mc.player.getPos().z);
             PlayerPositionLookS2CPacket packet = (PlayerPositionLookS2CPacket) event.packet;
             if (setYaw.get()) {
-                ((PlayerPositionLookS2CPacketAccessor) event.packet).setPitch(mc.player.pitch);
-                ((PlayerPositionLookS2CPacketAccessor) event.packet).setYaw(mc.player.yaw);
+                ((PlayerPositionLookS2CPacketAccessor) event.packet).setPitch(mc.player.getPitch());
+                ((PlayerPositionLookS2CPacketAccessor) event.packet).setYaw(mc.player.getYaw());
             }
             if (setID.get()) {
                 teleportID = packet.getTeleportId();
@@ -193,9 +183,9 @@ public class PacketFly extends Module {
         Vec3d vec = new Vec3d(x, y, z);
         Vec3d position = mc.player.getPos().add(vec);
         Vec3d outOfBoundsVec = outOfBoundsVec(vec, position);
-        packetSender(new PlayerMoveC2SPacket.PositionOnly(position.x, position.y, position.z, mc.player.isOnGround()));
+        packetSender(new PlayerMoveC2SPacket.PositionAndOnGround(position.x, position.y, position.z, mc.player.isOnGround()));
         if (invalidPacket.get()) {
-            packetSender(new PlayerMoveC2SPacket.PositionOnly(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, mc.player.isOnGround()));
+            packetSender(new PlayerMoveC2SPacket.PositionAndOnGround(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, mc.player.isOnGround()));
         }
         if (setPos.get()) {
             mc.player.setPos(position.x, position.y, position.z);

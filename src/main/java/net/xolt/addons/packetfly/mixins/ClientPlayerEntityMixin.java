@@ -2,7 +2,7 @@ package net.xolt.addons.packetfly.mixins;
 
 import com.mojang.authlib.GameProfile;
 import net.xolt.addons.packetfly.modules.PacketFly;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
