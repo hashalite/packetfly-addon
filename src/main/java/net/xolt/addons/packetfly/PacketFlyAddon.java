@@ -1,8 +1,8 @@
 package net.xolt.addons.packetfly;
 
 import net.xolt.addons.packetfly.modules.PacketFly;
-import minegame159.meteorclient.MeteorAddon;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.addons.MeteorAddon;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
